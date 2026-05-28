@@ -16,6 +16,7 @@ export default function TopicSuggesterInput({ setResult }) {
   const [selectedGaps, setSelectedGaps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
+  const [customTitle, setCustomTitle] = useState("");
 
   const { config, showFeedback } = useFeedbackModal();
 
@@ -58,11 +59,12 @@ export default function TopicSuggesterInput({ setResult }) {
 
       const selectedGapTexts = gaps
         .filter((g) => selectedGaps.includes(g.id))
-        .map((g) => g.gap);
+        .map((g) => g.gap_analysis);
 
       const response = await TopicSuggesterAPI({
         group_id,
         gaps: selectedGapTexts,
+        title: customTitle,
       });
 
       setResult(response.data);
@@ -143,15 +145,32 @@ export default function TopicSuggesterInput({ setResult }) {
                     />
                     <div>
                       <div className="small text-white fw-semibold">
-                        {gap.title || "Untitled Gap"}
+                        {gap.title || `Gap Analysis ${gap.id.substring(0, 8)}`}
                       </div>
-                      <div style={{ fontSize: "12px", color: "#a1a1b5" }}>
-                        {gap.gap}
+                      <div style={{ fontSize: "12px", color: "#a1a1b5", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "250px" }}>
+                        {gap.gap_analysis?.substring(0, 100)}...
                       </div>
                     </div>
                   </div>
                 ))}
             </div>
+          </div>
+
+          {/* RESULT TITLE INPUT */}
+          <div>
+            <small style={{ color: "#a1a1b5" }}>Result Title (Optional)</small>
+            <input
+              type="text"
+              className="form-control mt-2"
+              placeholder="e.g. Proposed AI Research Topics"
+              value={customTitle}
+              onChange={(e) => setCustomTitle(e.target.value)}
+              style={{
+                backgroundColor: "#25253a",
+                border: "1px solid #3a3a55",
+                color: "#fff",
+              }}
+            />
           </div>
 
           <div className="text-end">

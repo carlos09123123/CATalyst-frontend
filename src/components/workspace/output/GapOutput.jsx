@@ -100,9 +100,9 @@ export default function ExtractorOutput({ result }) {
                   <h6
                     className="fw-bold mb-0 text-truncate"
                     style={{ color: "#fff" }}
-                    title={item.title}
+                    title={item.title || `Gap Analysis ${item.id.substring(0, 8)}`}
                   >
-                    {item.title}
+                    {item.title || `Gap Analysis ${item.id.substring(0, 8)}`}
                   </h6>
                 </div>
               ))
@@ -122,7 +122,7 @@ export default function ExtractorOutput({ result }) {
           {activeItem ? (
             <>
               <h4 className="fw-bold mb-3" style={{ color: "#fff" }}>
-                {activeItem.title}
+                {activeItem.title || `Gap Analysis ${activeItem.id.substring(0, 8)}`}
               </h4>
               <div
                 className="p-4 rounded-3"
@@ -132,7 +132,9 @@ export default function ExtractorOutput({ result }) {
                   color: "#a1a1b5",
                 }}
               >
-                <p className="mb-0">{activeItem.gap}</p>
+                <p className="mb-0" style={{ whiteSpace: "pre-wrap" }}>
+                  {activeItem.gap_analysis || "No gap analysis available."}
+                </p>
               </div>
             </>
           ) : (

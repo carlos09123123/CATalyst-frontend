@@ -19,6 +19,7 @@ export default function GapInput({ setResult }) {
   const [selectedSummaries, setSelectedSummaries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
+  const [customTitle, setCustomTitle] = useState("");
 
   const { config, showFeedback } = useFeedbackModal();
 
@@ -60,6 +61,7 @@ export default function GapInput({ setResult }) {
       const response = await GapAPI({
         group_id,
         summary_id: selectedSummaries[0],
+        title: customTitle,
       });
 
       setResult(response.data);
@@ -168,6 +170,23 @@ export default function GapInput({ setResult }) {
                   </div>
                 ))}
             </div>
+          </div>
+
+          {/* RESULT TITLE INPUT */}
+          <div>
+            <small style={{ color: "#a1a1b5" }}>Result Title (Optional)</small>
+            <input
+              type="text"
+              className="form-control mt-2"
+              placeholder="e.g. Analysis of Deep Learning"
+              value={customTitle}
+              onChange={(e) => setCustomTitle(e.target.value)}
+              style={{
+                backgroundColor: "#25253a",
+                border: "1px solid #3a3a55",
+                color: "#fff",
+              }}
+            />
           </div>
 
           <div className="text-end">

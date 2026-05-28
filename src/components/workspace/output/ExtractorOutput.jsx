@@ -116,7 +116,7 @@ export default function ExtractorOutput({ result }) {
                   border: "1px solid #3a3a55"
                 }}
               >
-                {paper.title || "Untitled Paper"}
+                {paper.filename || paper.title || "Untitled Paper"}
               </button>
             ))}
           </div>
@@ -129,36 +129,21 @@ export default function ExtractorOutput({ result }) {
               paddingRight: "4px"
             }}
           >
-            {[
-              "title",
-              "abstract",
-              "introduction",
-              "methodology",
-              "results",
-              "discussion",
-              "conclusion",
-              "keywords",
-              "literature_review"
-            ].map((section) => (
-              <div
-                key={section}
-                className="p-3 rounded-3"
-                style={{
-                  backgroundColor: "#25253a",
-                  border: "1px solid #3a3a55"
-                }}
-              >
-                <h6 className="fw-bold text-capitalize text-white">
-                  {section.replace("_", " ")}
-                </h6>
-                <p style={{ color: "#a1a1b5" }}>
-                  {selectedPaper[section] || "No content available."}
-                </p>
-              </div>
-            ))}
+            <div
+              className="p-3 rounded-3"
+              style={{
+                backgroundColor: "#25253a",
+                border: "1px solid #3a3a55"
+              }}
+            >
+              <h6 className="fw-bold text-white mb-2">{selectedPaper.filename}</h6>
+              <p style={{ color: "#a1a1b5", whiteSpace: "pre-wrap", fontSize: "13px" }}>
+                {selectedPaper.extracted_text || "No content available."}
+              </p>
+            </div>
           </div>
         )}
       </div>
     </div>
   );
-}
+}
