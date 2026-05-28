@@ -19,6 +19,7 @@ export default function SummarizerInput({ setResult }) {
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState(false);
   const [selectedInstruction, setSelectedInstruction] = useState(null);
+  const [customTitle, setCustomTitle] = useState("");
 
   const { config, showFeedback } = useFeedbackModal();
 
@@ -53,7 +54,7 @@ export default function SummarizerInput({ setResult }) {
     try {
       setRunning(true);
 
-      const response = await summarizerAPI(selectedInstruction, group_id);
+      const response = await summarizerAPI(selectedInstruction, group_id, customTitle);
 
       setResult(response.data);
 
@@ -153,15 +154,32 @@ export default function SummarizerInput({ setResult }) {
                     />
                     <div>
                       <div className="small text-white fw-semibold">
-                        {item.title}
+                        {item.filename || "Untitled"}
                       </div>
                       <div style={{ fontSize: "12px", color: "#a1a1b5" }}>
-                        {item.description}
+                        {item.extracted_text?.substring(0, 80)}...
                       </div>
                     </div>
                   </div>
                 ))}
             </div>
+          </div>
+
+          {/* RESULT TITLE INPUT */}
+          <div>
+            <small style={{ color: "#a1a1b5" }}>Result Title (Optional)</small>
+            <input
+              type="text"
+              className="form-control mt-2"
+              placeholder="e.g. Overview of WebSocket Scaling"
+              value={customTitle}
+              onChange={(e) => setCustomTitle(e.target.value)}
+              style={{
+                backgroundColor: "#25253a",
+                border: "1px solid #3a3a55",
+                color: "#fff",
+              }}
+            />
           </div>
 
           {/* RUN BUTTON */}

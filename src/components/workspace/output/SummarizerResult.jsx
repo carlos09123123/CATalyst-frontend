@@ -126,7 +126,7 @@ export default function SummarizerResult({ result }) {
                   border: "1px solid #3a3a55"
                 }}
               >
-                {paper.title || "Untitled Summary"}
+                {paper.title || `Summary ${paper.id.substring(0, 8)}`}
               </button>
             ))}
           </div>
@@ -141,32 +141,18 @@ export default function SummarizerResult({ result }) {
               paddingRight: "4px"
             }}
           >
-            {[
-              "title",
-              "introduction",
-              "literature_review",
-              "methodology",
-              "results",
-              "discussion",
-              "conclusion",
-            ].map((section) => (
-              <div
-                key={section}
-                className="p-3 rounded-3"
-                style={{
-                  backgroundColor: "#25253a",
-                  border: "1px solid #3a3a55"
-                }}
-              >
-                <h6 className="fw-bold text-capitalize text-white">
-                  {section.replace("_", " ")}
-                </h6>
-
-                <p style={{ color: "#a1a1b5" }}>
-                  {selectedPaper[section] || "No content available."}
-                </p>
-              </div>
-            ))}
+            <div
+              className="p-3 rounded-3"
+              style={{
+                backgroundColor: "#25253a",
+                border: "1px solid #3a3a55"
+              }}
+            >
+              <h6 className="fw-bold text-white">Summary</h6>
+              <p style={{ color: "#a1a1b5", whiteSpace: "pre-wrap", marginTop: "10px", fontSize: "14px" }}>
+                {selectedPaper.summary || "No summary available."}
+              </p>
+            </div>
           </div>
 
         )}

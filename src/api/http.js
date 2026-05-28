@@ -12,14 +12,21 @@ export async function apiRequest(endpoint, options = {}) {
   }
 
   const res = await fetch(`${API_URL}${endpoint}`, {
-    headers,
     ...options,
+    headers: {
+      ...headers,
+      ...(options.headers || {}),
+    },
   });
 
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Request failed");
+    if (res.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    }
+    throw new Error(data.message || data.error || "Request failed");
   }
 
   return data;

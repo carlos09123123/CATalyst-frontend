@@ -196,8 +196,7 @@ export default function Groups() {
               You are not part of any groups yet.
             </p>
           ) : (
-            groups.filter((group) => group.is_active == true).
-            map((group) => (
+            groups.map((group) => (
               <div className="col-md-4" key={group.id}>
                 <GroupCard
                   name={group.name}

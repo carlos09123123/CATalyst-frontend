@@ -10,30 +10,31 @@ export async function extractorAPI(file,group_id) {
     body: formData,
   });
 }
-export async function summarizerAPI(id,group_id){
+export async function summarizerAPI(id, group_id, title){
   return apiRequest(`/summarizer/${id}`, {
     method: "POST",
-    body: JSON.stringify({ id,group_id }),
+    body: JSON.stringify({ id, group_id, title }),
     headers: {
       "Content-Type": "application/json",
     },
   });
 }
-export async function GapAPI(id){
-    return apiRequest(`/gap/${id}`, {
+export async function GapAPI({ summary_id, group_id, title }){
+    return apiRequest(`/gap/${summary_id}`, {
     method: "POST",
-    body: JSON.stringify({ id }),
+    body: JSON.stringify({ id: summary_id, group_id, title }),
     headers: {
       "Content-Type": "application/json",
     },
   });
 }
-export async function TopicSuggesterAPI({group_id, gaps}){
+export async function TopicSuggesterAPI({group_id, gaps, title}){
       return apiRequest(`/topic/run`, {
     method: "POST",
     body: JSON.stringify({ 
       group_id,
-      gaps
+      gaps,
+      title
      }),
     headers: {
       "Content-Type": "application/json",

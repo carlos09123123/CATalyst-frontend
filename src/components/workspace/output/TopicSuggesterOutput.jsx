@@ -95,9 +95,9 @@ export default function TopicSuggesterOutput({ result }) {
                   <h6
                     className="fw-bold mb-0 text-truncate"
                     style={{ color: "#fff" }}
-                    title={item.title}
+                    title={item.title || `Suggested Topics ${item.id.substring(0, 8)}`}
                   >
-                    {item.title}
+                    {item.title || `Suggested Topics ${item.id.substring(0, 8)}`}
                   </h6>
                 </div>
               ))
@@ -117,7 +117,7 @@ export default function TopicSuggesterOutput({ result }) {
           {activeItem ? (
             <>
               <h4 className="fw-bold mb-3" style={{ color: "#fff" }}>
-                {activeItem.title}
+                {activeItem.title || `Suggested Topics ${activeItem.id.substring(0, 8)}`}
               </h4>
               <div
                 className="p-4 rounded-3"
@@ -127,7 +127,9 @@ export default function TopicSuggesterOutput({ result }) {
                   color: "#a1a1b5",
                 }}
               >
-                <p className="mb-0">{activeItem.rationale}</p>
+                <p className="mb-0" style={{ whiteSpace: "pre-wrap" }}>
+                  {activeItem.topics || "No topics available."}
+                </p>
               </div>
             </>
           ) : (
