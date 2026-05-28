@@ -4,12 +4,16 @@ import { HiOutlineDocumentSearch } from "react-icons/hi";
 import { IoExtensionPuzzle } from "react-icons/io5";
 import { PiHeadCircuitBold } from "react-icons/pi";
 import { IoGlobeOutline } from "react-icons/io5";
+import { FaDatabase, FaClipboardCheck, FaBullseye } from "react-icons/fa";
+
 const steps = [
   { key: "extractor", label: "Extractor", icon: IoDocumentText },
   { key: "summarizer", label: "Summarizer", icon: HiOutlineDocumentSearch },
   { key: "gap", label: "Gap Extractor", icon: IoExtensionPuzzle },
   { key: "topic", label: "Topic Suggester", icon: PiHeadCircuitBold },
-  // { key: "search", label: "Searcher", icon: IoGlobeOutline },
+  { key: "integration", label: "Data Integration", icon: FaDatabase },
+  { key: "rrl", label: "RRL Assessment", icon: FaClipboardCheck },
+  { key: "objective", label: "SMART Objectives", icon: FaBullseye },
 ];
 
 export default function WorkflowTracker({ currentStep, onStepChange }) {

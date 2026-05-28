@@ -1,0 +1,662 @@
+CEBU INSTITUTE OF TECHNOLOGY
+
+UNIVERSITY
+
+
+
+
+
+COLLEGE OF COMPUTER STUDIES
+
+
+
+
+
+
+
+
+
+
+
+Software Design Description
+
+for
+
+CATalyst 2.0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Change History Signature
+
+
+
+
+
+
+
+
+
+
+
+Preface
+
+This Software Design Description (SDD) documents the design of three new modules added to CATalyst 2.0. Modules 1 through 6 (Authentication, Workspaces, Document Extractor, Summarizer, Gap Extractor, Topic Suggester) are documented in the original SDD by Mr. Sabay et al. from the previous semester. This document covers only the three new modules: Input Preparation and Integration, AI-Assisted RRL Assessment and Evaluation, and SMART Research Objective Generator. The design follows the existing CATalyst architecture using React frontend, Express.js backend, Supabase database, and n8n AI workflows.
+
+
+
+
+
+
+
+___
+
+
+
+
+
+
+
+Table of Contents
+
+
+
+1.	Introduction	6
+
+1.1.	Purpose	6
+
+1.2.	Scope	6
+
+1.3.	Definitions and Acronyms	6
+
+1.4.	References	6
+
+2.	Architectural Design	7
+
+3.	Detailed Design	8
+
+Module 1	8
+
+Module 2	9
+
+
+
+
+
+
+
+
+
+Introduction
+
+
+
+Purpose
+
+This document provides the software design description for three new modules added to CATalyst 2.0. These modules extend the existing CATalyst platform to support data integration from external project sources, AI-assisted RRL evaluation, and AI-generated SMART research objectives. This document serves as a reference for developers implementing these modules and ensures alignment with the requirements specified in the SRS.
+
+
+
+Scope
+
+This SDD covers the detailed design of three new modules:
+
+
+
+Module 1: Input Preparation and Integration from Mr. Sabay's Project (Objective 1)
+
+
+
+Module 2: AI-Assisted RRL Assessment and Evaluation (Objective 2)
+
+
+
+Module 3: SMART Research Objective Generator (Objective 3)
+
+
+
+Modules 1 through 6 (Authentication, Workspaces, Document Extractor, Summarizer, Gap Extractor, Topic Suggester) are documented in the original SDD by the previous group. This document focuses only on the new modules added by the current team.
+
+
+
+Definitions and Acronyms
+
+AI - Artificial Intelligence. The application of computer systems able to perform tasks or produce output normally requiring human intelligence.
+
+
+
+API - Application Programming Interface. A set of protocols and tools for building software applications.
+
+
+
+ERD - Entity-Relationship Diagram. A visual representation of database tables and their relationships.
+
+
+
+LLM - Large Language Model. A software tool capable of corpus-based linguistic analysis and prediction.
+
+
+
+n8n - A workflow automation platform that combines AI capabilities with business process automation.
+
+
+
+RRL - Review of Related Literature. A comprehensive summary and analysis of existing academic works.
+
+
+
+SMART - Specific, Measurable, Attainable, Relevant, Time-bound. A framework for writing effective research objectives.
+
+
+
+SDD - Software Design Description. The document that describes the software design of a system.
+
+
+
+SRS - Software Requirements Specification. The document that describes functional and non-functional requirements.
+
+
+
+Supabase - Backend-as-a-Service platform used for authentication, database management, and storage.
+
+
+
+References
+
+Original CATalyst SRS by Mr. Sabay et al. (Previous Semester)
+
+
+
+Original CATalyst SDD by Mr. Sabay et al. (Previous Semester)
+
+
+
+Approved Proposal: CATalyst Extended Version - Team 2526-sem2-it332-61
+
+
+
+SRS for CATalyst 2.0 - Team 2526-sem2-it332-61 (May 2026)
+
+Architectural Design
+
+
+
+.
+
+Detailed Design
+
+Module 1
+
+1.1 Ingest Data from Mr. Sabay's Project
+
+User Interface Design
+
+The Data Integration page contains a file upload area that accepts data files (CSV or JSON format) from Mr. Sabay's project. An "Ingest Data" button triggers the ingestion process. After processing, an import summary panel displays the number of records successfully ingested and any failed records.
+
+Front-end component(s)
+
+Component Name: DataIntegrationUpload
+
+Description and purpose: 
+
+This component renders a drag-and-drop file upload zone where users can upload data files containing gaps and titles from Mr. Sabay's project. It validates the file type before submission and displays upload progress.
+
+Component type or format: React functional component using useState and useCallback hooks.	
+
+Component Name: IntegrationSummary
+
+Description and purpose: This component displays the results of the data ingestion process, including the number of records successfully ingested, any records that failed validation, and a preview table of the imported data.
+
+Component type or format: React functional component that receives ingestion results as props.
+
+Back-end component(s)
+
+Component Name: IntegrationController
+
+Description and purpose: This controller handles HTTP POST requests for data ingestion. It receives the uploaded file, validates the format, and calls the integration service to process the data.
+
+Component type or format: Express.js controller function
+
+Component Name: IntegrationService
+
+Description and purpose: This service contains the business logic for data ingestion. It parses the uploaded file, normalizes the data structure, validates each record, and saves valid records to the database. Invalid records are logged for manual review.
+
+Component type or format: Node.js service class.
+
+Component Name: IntegrationRepository
+
+Description and purpose: This repository handles database operations for the integration module. It provides methods to save ingested records to the integration_table and retrieve them for preview..
+
+Component type or format: Supabase client wrapper.
+
+
+
+
+
+Object-Oriented Components
+
+Class Diagram
+
+
+
+Sequence Diagram
+
+
+
+Data Design
+
+ERD or schema
+
+
+
+
+
+1.2 Validate and Preview Imported Data
+
+User Interface Design
+
+The validation interface displays a table showing all imported records with checkboxes for selection. Each row shows the gap text and title text. Buttons for "Accept Selected", "Reject Selected", and "Confirm All" are provided at the bottom of the table.
+
+Front-end component(s)
+
+Component Name: DataPreviewTable
+
+Description and purpose: This component renders a table of imported records. Each record has an accept or reject toggle. Users can preview the data before permanently saving it to their workspace.
+
+Component type or format: React functional component using React Table library for sorting and filtering.
+
+Component Name: ValidationControls
+
+Description and purpose: This component provides buttons for bulk actions on imported records (accept all, reject all, confirm selected). It communicates the user's choices back to the backend for processing.
+
+Component type or format: React functional component with event handlers.
+
+
+
+Back-end component(s)
+
+Component Name: ValidationController
+
+Description and purpose: This controller handles requests to accept or reject imported records. It receives the record IDs and the action to perform, then calls the validation service.
+
+Component type or format: Express.js controller function.
+
+Component Name: ValidationService
+
+Description and purpose: This service processes user validation choices. When a record is accepted, it is saved to the workspace. When rejected, the record is marked as discarded but retained for audit purposes..
+
+Component type or format: Node.js service class.
+
+Object-Oriented Components
+
+Class Diagram
+
+
+
+Sequence Diagram
+
+
+
+Data Design
+
+ERD or schema
+
+
+
+1.3 Handle Invalid or Incompatible Data Format
+
+User Interface Design
+
+The error handling interface displays a red error banner at the top of the Data Integration page with the error message. A section below shows incompatible records with the reason for rejection.
+
+Front-end component(s)
+
+Component Name: ErrorDisplay
+
+Description and purpose: This component renders error messages and a table of incompatible records. It displays the reason for each failed record and provides options to download the error log.
+
+Component type or format: React functional component with conditional rendering.
+
+Component Name: IncompatibleRecordsTable
+
+Description and purpose: This component displays a table of records that failed validation, showing the original data and the specific error reason for each record.
+
+Component type or format: React functional component that maps over error records.
+
+
+
+Back-end component(s)
+
+Component Name: ErrorHandlingService
+
+Description and purpose: This service handles format validation errors. It logs incompatible records to a separate table for manual review and returns detailed error messages to the frontend.
+
+Component type or format: Express.js controller function.
+
+Component Name: ErrorLogRepository
+
+Description and purpose: This repository handles saving and retrieving error logs for incompatible data formats.
+
+Component type or format: Supabase client wrapper.
+
+Object-Oriented Components
+
+Class Diagram
+
+
+
+Sequence Diagram
+
+
+
+Data Design
+
+ERD or Schema
+
+
+
+
+
+Module 2
+
+2.1 Run RRL Assessment
+
+User Interface Design
+
+The RRL Assessment page contains a list of summarized research papers available in the current workspace. Each paper has a checkbox for selection. A "Run Assessment" button is located at the top. After processing, results are displayed in cards showing the paper title, AI-generated relevance score, and structured assessment.
+
+Front-end component(s)
+
+Component Name: RRLPaperSelector
+
+Description and purpose: This component displays a list of summarized papers from the workspace. Users can select one or more papers to assess. It fetches the list from the backend via API call.
+
+Component type or format: React functional component using useEffect for data fetching.
+
+Component Name: RRLAssessmentResults
+
+Description and purpose: This component displays the assessment results for each selected paper. It shows the relevance score, criteria ratings (recency, alignment, significance, relevance), and the full assessment text.
+
+Component type or format: React functional component that maps over assessment results and renders cards.
+
+Back-end component(s)
+
+Component Name: RRLAssessmentController
+
+Description and purpose: This controller handles requests to run RRL assessments. It receives the list of selected paper IDs, retrieves the paper summaries, and initiates the AI assessment workflow.
+
+Component type or format: RRLAssessmentService
+
+Component Name: RRLAssessmentWorkflow
+
+Description and purpose: This component integrates with n8n to execute the LangGraph-based assessment workflow. It sends the paper summaries to the workflow and receives the AI-generated scores and assessments.
+
+Component type or format: n8n webhook integration.
+
+Object-Oriented Components
+
+Class Diagram
+
+
+
+Sequence Diagram
+
+
+
+Data Design
+
+ERD or schema
+
+
+
+
+
+2.2 View RRL Assessment Results
+
+User Interface Design
+
+The view results page displays previously generated assessments in cards showing the paper title, relevance score, assessment date, and a "View Details" link. Clicking View Details expands the card to show the full assessment text.
+
+Front-end component(s)
+
+Component Name : SavedRRLAssessments
+
+Description and purpose: This component fetches and displays previously saved RRL assessments from the database. It allows users to view historical assessments without re-running the AI.
+
+Component type or format :React functional component with useEffect for data fetching.
+
+Back-end component(s)
+
+Component Name: RRLAssessmentViewController
+
+Description and purpose : This controller handles GET requests to retrieve saved RRL assessments for a given workspace.
+
+Component type or format: Express.js controller function.
+
+Object-Oriented Components
+
+Class Diagram
+
+
+
+Sequence Diagram
+
+
+
+Data Design
+
+ERD or schema
+
+
+
+2.3 Accept, Reject, or Flag RRL Evaluation
+
+User Interface Design
+
+The feedback interface is integrated into each assessment card. Each card contains three buttons: a green "Accept" button, a red "Reject" button, and a yellow "Flag" button. When clicked, the button changes color to indicate the selected action, and a confirmation message appears.Front-end component(s)
+
+Component Name : RRLFeedbackButtons
+
+Description and purpose: This component renders the Accept, Reject, and Flag buttons for each assessment. When clicked, it sends the feedback to the backend and updates the button states visually.
+
+Component type or format : React functional component with click handlers and optimistic UI updates.
+
+Back-end component(s)
+
+Component Name: RRLFeedbackController
+
+Description and purpose : This controller handles POST requests to store user feedback on RRL assessments. It receives the assessment ID and the feedback value (accept, reject, or flag).
+
+Component type or format: Express.js controller function.
+
+Component Name: RRLFeedbackService
+
+Description and purpose : This service updates the user_feedback column in the rrl_assessment_table. It also logs the feedback for potential AI retraining purposes.
+
+Component type or format: Node.js service class.
+
+
+
+Object-Oriented Components
+
+Class Diagram
+
+
+
+Sequence Diagram
+
+
+
+Data Design
+
+ERD or schema 
+
+
+
+
+
+Module 3
+
+3.1 Generate SMART Objectives
+
+User Interface Design
+
+The Objective Generator page contains two dropdown selectors: one for selecting a research gap and one for selecting a research topic. A large "Generate Objectives" button is centered below the selectors. After generation, an editable text area appears showing the 3-4 SMART objectives, each numbered.
+
+Front-end component(s)
+
+Component Name: GapTopicSelector
+
+Description and purpose: This component renders two dropdown lists populated from the gap_table and topic_table. It allows users to select one gap and one topic for objective generation.
+
+Component type or format: React functional component using useState for selected values.
+
+Back-end component(s)
+
+Component Name: ObjectiveController
+
+Description and purpose :This controller handles POST requests to generate SMART objectives. It receives the selected gap ID and topic ID, retrieves the actual text content, and initiates the AI generation process.
+
+Component type or format :Express.js controller function.
+
+Component Name: ObjectiveGenerationWorkflow
+
+Description and purpose : This component integrates with n8n to execute the LangGraph-based objective generation workflow.
+
+Component type or format : n8n webhook integration..
+
+Object-Oriented Components
+
+Class Diagram
+
+
+
+Sequence Diagram
+
+
+
+Data Design
+
+ERD or schema 
+
+
+
+
+
+
+
+
+
+3.2 View Generated SMART Objectives
+
+User Interface Design
+
+The view objectives page displays all previously generated SMART objective sets for the current workspace. Each version is shown in a collapsible card. The most recent version is expanded by default showing the four objectives in a numbered list.
+
+Front-end component(s)
+
+Component Name: ObjectivesHistory
+
+Description and purpose: This component fetches and displays all versions of generated SMART objectives for the current workspace. It presents each version in a card with version number and timestamp.
+
+Component type or format: React functional component using useEffect for data fetching.
+
+Back-end component(s)
+
+Component Name: ObjectiveViewController
+
+Description and purpose: This controller handles GET requests to retrieve saved objective sets for a given workspace.
+
+Component type or format: Express.js controller function.
+
+Object-Oriented Components
+
+Class Diagram
+
+
+
+Sequence Diagram
+
+
+
+Data Design
+
+ERD or schema
+
+
+
+
+
+3.3 Edit and Regenerate SMART Objectives
+
+User Interface Design
+
+The edit and regenerate interface is integrated into the EditableObjectivesPanel. Each objective has its own text area that users can modify directly. A "Regenerate" button below the objectives calls the AI to generate a new set based on the same gap and topic. A "Save Version" button saves the current state as a new version.Front-end component(s)
+
+Component Name: EditableObjectiveField
+
+Description and purpose: This component renders each objective as an editable text field. Users can click on the text to edit it inline.
+
+Component type or format: React functional component with contentEditable or textarea input.
+
+Back-end component(s)
+
+Component Name: ObjectiveEditController
+
+Description and purpose: This controller handles PUT requests to update objective text and POST requests to regenerate objectives.
+
+Component type or format: ObjectiveEditService
+
+Object-Oriented Components
+
+Class Diagram
+
+
+
+Sequence Diagram
+
+
+
+Data Design
+
+ERD or schema
+
+
+
+
+

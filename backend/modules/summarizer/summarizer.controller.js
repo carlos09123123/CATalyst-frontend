@@ -21,7 +21,7 @@ export const generateSummary = async (req, res) => {
 
     // 2. Initialize LangChain OpenAI Model
     const model = new ChatGoogleGenerativeAI({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.1-flash-lite',
       temperature: 0.3,
       apiKey: process.env.GOOGLE_API_KEY,
     });
