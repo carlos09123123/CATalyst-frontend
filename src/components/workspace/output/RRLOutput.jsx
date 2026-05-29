@@ -54,6 +54,8 @@ export default function RRLOutput({ result }) {
     }
   }
 
+  const activeFeedback = activeItem?.user_feedback || parsedDetails?.user_feedback || null;
+
   return (
     <div
       className="h-100 d-flex flex-column rounded-4 p-3"
@@ -109,7 +111,7 @@ export default function RRLOutput({ result }) {
                     Score: {item.relevance_score}/100
                   </h6>
                   <div style={{ fontSize: "12px", color: activeId === item.id ? "#e0e0ff" : "#a1a1b5", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    {item.summary_table?.title || 'Untitled'}
+                    {item.summary_title || item.summary_table?.title || 'Untitled'}
                   </div>
                 </div>
               ))
@@ -135,7 +137,7 @@ export default function RRLOutput({ result }) {
                     RRL Assessment Scorecard
                   </h4>
                   <div style={{ color: "#a1a1b5" }}>
-                    Target: {activeItem.summary_table?.title || 'Untitled Summary'}
+                    Target: {activeItem.summary_title || activeItem.summary_table?.title || 'Untitled Summary'}
                   </div>
                 </div>
                 
@@ -143,19 +145,19 @@ export default function RRLOutput({ result }) {
                 <div className="d-flex gap-2">
                   <button 
                     onClick={() => handleFeedback(activeItem.id, 'accept')}
-                    className={`btn btn-sm ${activeItem.user_feedback === 'accept' ? 'btn-success' : 'btn-outline-success'}`}
+                    className={`btn btn-sm ${activeFeedback === 'accept' ? 'btn-success' : 'btn-outline-success'}`}
                   >
                     Accept
                   </button>
                   <button 
                     onClick={() => handleFeedback(activeItem.id, 'reject')}
-                    className={`btn btn-sm ${activeItem.user_feedback === 'reject' ? 'btn-danger' : 'btn-outline-danger'}`}
+                    className={`btn btn-sm ${activeFeedback === 'reject' ? 'btn-danger' : 'btn-outline-danger'}`}
                   >
                     Reject
                   </button>
                   <button 
                     onClick={() => handleFeedback(activeItem.id, 'flag')}
-                    className={`btn btn-sm ${activeItem.user_feedback === 'flag' ? 'btn-warning' : 'btn-outline-warning'}`}
+                    className={`btn btn-sm ${activeFeedback === 'flag' ? 'btn-warning' : 'btn-outline-warning'}`}
                   >
                     Flag
                   </button>

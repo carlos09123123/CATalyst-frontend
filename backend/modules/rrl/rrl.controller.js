@@ -71,7 +71,6 @@ export const runAssessment = async (req, res) => {
         .insert([{
           group_id,
           summary_id: paper.id,
-          relevance_score: parsedAssessment.relevance_score,
           assessment_feedback: JSON.stringify(parsedAssessment) // Store full JSON in the text field for easy retrieval
         }])
         .select()
@@ -93,17 +92,47 @@ export const getAssessments = async (req, res) => {
   try {
     const { groupId } = req.params;
     
-    // Fetch assessments and join with summary table for titles
-    const { data, error } = await supabase
+    const { data: assessments, error } = await supabase
       .from('rrl_assessment_table')
-      .select(`
-        *,
-        summary_table(title)
-      `)
+      .select('*')
       .eq('group_id', groupId)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
+
+    const summaryIds = [...new Set((assessments || []).map((item) => item.summary_id).filter(Boolean))];
+    let summaryMap = new Map();
+
+    if (summaryIds.length > 0) {
+      const { data: summaries, error: summaryError } = await supabase
+        .from('summary_table')
+        .select('id, title')
+        .in('id', summaryIds);
+
+      if (summaryError) throw summaryError;
+
+      summaryMap = new Map((summaries || []).map((summary) => [summary.id, summary.title]));
+    }
+
+    const data = (assessments || []).map((item) => ({
+      ...item,
+      relevance_score: item.relevance_score ?? (() => {
+        try {
+          return item.assessment_feedback ? JSON.parse(item.assessment_feedback).relevance_score : null;
+        } catch {
+          return null;
+        }
+      })(),
+      user_feedback: item.user_feedback ?? (() => {
+        try {
+          return item.assessment_feedback ? JSON.parse(item.assessment_feedback).user_feedback : null;
+        } catch {
+          return null;
+        }
+      })(),
+      summary_title: summaryMap.get(item.summary_id) || 'Untitled Summary',
+    }));
+
     res.json({ data });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -113,10 +142,29 @@ export const getAssessments = async (req, res) => {
 export const submitFeedback = async (req, res) => {
   try {
     const { id, feedback } = req.body; // feedback: 'accept', 'reject', 'flag'
+
+    const { data: existingRecord, error: fetchError } = await supabase
+      .from('rrl_assessment_table')
+      .select('assessment_feedback')
+      .eq('id', id)
+      .single();
+
+    if (fetchError) throw fetchError;
+
+    let updatedAssessment = {};
+    if (existingRecord?.assessment_feedback) {
+      try {
+        updatedAssessment = JSON.parse(existingRecord.assessment_feedback);
+      } catch {
+        updatedAssessment = {};
+      }
+    }
+
+    updatedAssessment.user_feedback = feedback;
     
     const { data, error } = await supabase
       .from('rrl_assessment_table')
-      .update({ user_feedback: feedback })
+      .update({ assessment_feedback: JSON.stringify(updatedAssessment) })
       .eq('id', id)
       .select()
       .single();

@@ -18,6 +18,7 @@ export const analyzeGaps = async (req, res) => {
     }
 
     const summaryText = summaryDoc.summary;
+    const resolvedTitle = title?.trim() || `Gap Analysis ${id.substring(0, 8)}`;
 
     // 2. Initialize LangChain OpenAI Model
     const model = new ChatGoogleGenerativeAI({
@@ -34,7 +35,7 @@ export const analyzeGaps = async (req, res) => {
     // 3. Save to Supabase
     const { data, error } = await supabase
       .from('gap_table')
-      .insert([{ group_id, summary_id: id, gap_analysis: gapAnalysisText, title }])
+      .insert([{ group_id, summary_id: id, gap_analysis: gapAnalysisText, title: resolvedTitle }])
       .select();
 
     if (error) throw error;

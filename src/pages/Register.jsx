@@ -1,8 +1,9 @@
 import PublicLayout from "../layouts/PublicLayout";
 import { useState } from "react";
 import { register as registerAPI } from "../api/auth.api";
-import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { useFeedbackModal } from "../hooks/useFeedbackModel";
+import FeedbackModal from "../components/modals/FeedbackModal";
 
 import { FaCheckCircle } from "react-icons/fa";
 import { GrSecure } from "react-icons/gr";
@@ -10,14 +11,31 @@ import { GrSecure } from "react-icons/gr";
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login } = useAuth();
   const navigate = useNavigate();
+  const { config, showFeedback } = useFeedbackModal();
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const data = await registerAPI({ email, password });
-    login(data.user, data.token);
-    navigate("/groups");
+    try {
+      const data = await registerAPI({ email, password });
+
+      if (data.token) {
+        navigate("/groups");
+        return;
+      }
+
+      showFeedback({
+        type: "success",
+        title: "Account Created",
+        message: data.message || "Account created. Check your email to activate it before logging in.",
+      });
+    } catch (err) {
+      showFeedback({
+        type: "error",
+        title: "Registration Failed",
+        message: err.response?.data?.message || err.message || "Unable to create account.",
+      });
+    }
   }
 
   return (
@@ -107,6 +125,8 @@ export default function Register() {
 
         </div>
       </div>
+
+      <FeedbackModal type={config.type} title={config.title} message={config.message} />
     </PublicLayout>
   );
 }

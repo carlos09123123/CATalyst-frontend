@@ -9,7 +9,7 @@ export const generateSummary = async (req, res) => {
     // 1. Fetch extracted text from Supabase
     const { data: extractedDoc, error: fetchError } = await supabase
       .from('extractor_table')
-      .select('extracted_text')
+      .select('extracted_text, filename')
       .eq('id', id)
       .single();
 
@@ -18,6 +18,10 @@ export const generateSummary = async (req, res) => {
     }
 
     const rawText = extractedDoc.extracted_text;
+    const fileBaseName = extractedDoc.filename
+      ? extractedDoc.filename.replace(/\.[^.]+$/, '')
+      : `Summary ${id.substring(0, 8)}`;
+    const resolvedTitle = title?.trim() || fileBaseName;
 
     // 2. Initialize LangChain OpenAI Model
     const model = new ChatGoogleGenerativeAI({
@@ -34,7 +38,7 @@ export const generateSummary = async (req, res) => {
     // 3. Save to Supabase
     const { data, error } = await supabase
       .from('summary_table')
-      .insert([{ group_id, original_id: id, summary: summaryText, title }])
+      .insert([{ group_id, original_id: id, summary: summaryText, title: resolvedTitle }])
       .select();
 
     if (error) throw error;
@@ -48,12 +52,38 @@ export const generateSummary = async (req, res) => {
 export const getSummaryByGroupAPI = async (req, res) => {
   try {
     const { group_id } = req.params;
-    const { data, error } = await supabase
+    const { data: summaries, error } = await supabase
       .from('summary_table')
       .select('*')
       .eq('group_id', group_id);
 
     if (error) throw error;
+
+    const originalIds = [...new Set((summaries || []).map((item) => item.original_id).filter(Boolean))];
+    let sourceMap = new Map();
+
+    if (originalIds.length > 0) {
+      const { data: sources, error: sourceError } = await supabase
+        .from('extractor_table')
+        .select('id, filename')
+        .in('id', originalIds);
+
+      if (sourceError) throw sourceError;
+
+      sourceMap = new Map((sources || []).map((item) => [item.id, item.filename]));
+    }
+
+    const data = (summaries || []).map((item) => {
+      const fallbackTitle = sourceMap.get(item.original_id)
+        ? sourceMap.get(item.original_id).replace(/\.[^.]+$/, '')
+        : `Summary ${String(item.id).substring(0, 8)}`;
+
+      return {
+        ...item,
+        title: item.title?.trim() || fallbackTitle,
+      };
+    });
+
     res.json({ data });
   } catch (err) {
     res.status(500).json({ error: err.message });

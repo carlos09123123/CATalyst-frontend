@@ -47,6 +47,10 @@ export const signup = async (req, res) => {
     res.json({
       user: data.user,
       token: data.session?.access_token || null,
+      needsConfirmation: !data.session,
+      message: data.session
+        ? 'Account created successfully.'
+        : 'Account created. Check your email to confirm the account before logging in.',
     });
   } catch (error) {
     console.error('Signup error:', error);
